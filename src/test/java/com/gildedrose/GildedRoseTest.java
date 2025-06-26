@@ -22,14 +22,14 @@ class GildedRoseTest {
 
     @Test
     void shouldNotChangeItemNameAfterUpdate() {
-        Item[] items = new Item[] { new Item("+5 Dexterity Vest", 0, 0) };
+        Item[] items = new Item[]{new Item("+5 Dexterity Vest", 0, 0)};
         GildedRose app = simulateDaysPassed(items, 1);
         assertEquals("+5 Dexterity Vest", app.items[0].name, "Item name should remain unchanged");
     }
 
     @Test
     void defaultItem_onSellDate_qualityDecreasesBy1EachDay() {
-        Item[] items = new Item[] { new Item("+5 Dexterity Vest", 10, 20) };
+        Item[] items = new Item[]{new Item("+5 Dexterity Vest", 10, 20)};
         GildedRose app = simulateDaysPassed(items, 10);
         Item item = app.items[0];
 
@@ -40,7 +40,7 @@ class GildedRoseTest {
 
     @Test
     void defaultItem_afterSellDate_qualityDecreasesBy2EachDay() {
-        Item[] items = new Item[] { new Item("+5 Dexterity Vest", 10, 20) };
+        Item[] items = new Item[]{new Item("+5 Dexterity Vest", 10, 20)};
         GildedRose app = simulateDaysPassed(items, 12);
         Item item = app.items[0];
 
@@ -50,7 +50,7 @@ class GildedRoseTest {
 
     @Test
     void defaultItem_afterSellDate_qualityShouldNotBeNegative() {
-        Item[] items = new Item[] { new Item("+5 Dexterity Vest", 10, 20) };
+        Item[] items = new Item[]{new Item("+5 Dexterity Vest", 10, 20)};
         GildedRose app = simulateDaysPassed(items, 25);
         Item item = app.items[0];
 
@@ -60,7 +60,7 @@ class GildedRoseTest {
 
     @Test
     void agedBrieItem_beforeSellDate_qualityIncreasesBy1EachDay() {
-        Item[] items = new Item[] { new Item("Aged Brie", 2, 0) };
+        Item[] items = new Item[]{new Item("Aged Brie", 2, 0)};
         GildedRose app = simulateDaysPassed(items, 1);
         Item item = app.items[0];
 
@@ -70,7 +70,7 @@ class GildedRoseTest {
 
     @Test
     void agedBrieItem_beforeSellDate_qualityMaxed() {
-        Item[] items = new Item[] { new Item("Aged Brie", 2, 50) };
+        Item[] items = new Item[]{new Item("Aged Brie", 2, 50)};
         GildedRose app = simulateDaysPassed(items, 1);
         Item item = app.items[0];
 
@@ -80,7 +80,7 @@ class GildedRoseTest {
 
     @Test
     void agedBrieItem_onSellDate_qualityIncreasesBy1EachDay() {
-        Item[] items = new Item[] { new Item("Aged Brie", 2, 0) };
+        Item[] items = new Item[]{new Item("Aged Brie", 2, 0)};
         GildedRose app = simulateDaysPassed(items, 2);
         Item item = app.items[0];
 
@@ -90,7 +90,7 @@ class GildedRoseTest {
 
     @Test
     void agedBrieItem_afterSellDate_qualityIncreasesBy2EachDay() {
-        Item[] items = new Item[] { new Item("Aged Brie", 2, 0) };
+        Item[] items = new Item[]{new Item("Aged Brie", 2, 0)};
         GildedRose app = simulateDaysPassed(items, 10);
         Item item = app.items[0];
 
@@ -100,7 +100,7 @@ class GildedRoseTest {
 
     @Test
     void agedBrieItem_afterSellDate_qualityNeverExceedsFifty() {
-        Item[] items = new Item[] { new Item("Aged Brie", 2, 0) };
+        Item[] items = new Item[]{new Item("Aged Brie", 2, 0)};
         GildedRose app = simulateDaysPassed(items, 30);
         Item item = app.items[0];
 
@@ -110,7 +110,7 @@ class GildedRoseTest {
 
     @Test
     void backstagePassesItem_beforeSellDate_increaseBy1WhenMoreThan10Days() {
-        Item[] items = new Item[] { new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20) };
+        Item[] items = new Item[]{new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20)};
         GildedRose app = simulateDaysPassed(items, 1);
         Item item = app.items[0];
 
@@ -120,7 +120,7 @@ class GildedRoseTest {
 
     @Test
     void backstagePassesItem_beforeSellDate_qualityIncreaseBy2When10To6Days() {
-        Item[] items = new Item[] { new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20) };
+        Item[] items = new Item[]{new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20)};
         GildedRose app = simulateDaysPassed(items, 7); // 9 days left
         Item item = app.items[0];
 
@@ -130,7 +130,7 @@ class GildedRoseTest {
 
     @Test
     void backstagePassesItem_beforeSellDate_qualityIncreaseBy3When5DaysOrLess() {
-        Item[] items = new Item[] { new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20) };
+        Item[] items = new Item[]{new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20)};
         GildedRose app = simulateDaysPassed(items, 13);
         Item item = app.items[0];
 
@@ -140,7 +140,7 @@ class GildedRoseTest {
 
     @Test
     void backstagePassesItem_afterSellDate_qualityDropToZero() {
-        Item[] items = new Item[] { new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20) };
+        Item[] items = new Item[]{new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20)};
         GildedRose app = simulateDaysPassed(items, 16);
         Item item = app.items[0];
 
@@ -150,7 +150,7 @@ class GildedRoseTest {
 
     @Test
     void backstagePassesItem_onSellDate_qualityNeverExceedsFifty() {
-        Item[] items = new Item[] { new Item("Backstage passes to a TAFKAL80ETC concert", 5, 49) };
+        Item[] items = new Item[]{new Item("Backstage passes to a TAFKAL80ETC concert", 5, 49)};
         GildedRose app = simulateDaysPassed(items, 5);
         Item item = app.items[0];
 
@@ -160,7 +160,7 @@ class GildedRoseTest {
 
     @Test
     void sulfurasItem_afterSellDate_SellInAndQualityDoNotUpdate() {
-        Item[] items = new Item[] { new Item("Sulfuras, Hand of Ragnaros", 0, 80) };
+        Item[] items = new Item[]{new Item("Sulfuras, Hand of Ragnaros", 0, 80)};
         GildedRose app = simulateDaysPassed(items, 5);
         Item item = app.items[0];
 
@@ -170,7 +170,7 @@ class GildedRoseTest {
 
     @Test
     void sulfurasItem_sellInAndQualityNeverUpdate() {
-        Item[] items = new Item[] { new Item("Sulfuras, Hand of Ragnaros", 10, 80) };
+        Item[] items = new Item[]{new Item("Sulfuras, Hand of Ragnaros", 10, 80)};
         GildedRose app = simulateDaysPassed(items, 15);
         Item item = app.items[0];
 
