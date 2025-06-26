@@ -1,5 +1,8 @@
 package com.gildedrose;
 
+import com.gildedrose.factory.UpdateStrategyFactory;
+import com.gildedrose.strategy.UpdateStrategy;
+
 class GildedRose {
     Item[] items;
 
@@ -9,30 +12,16 @@ class GildedRose {
 
     public void updateQuality() {
         for (Item item : items) {
-            boolean isAgedBrie = item.name.equals("Aged Brie");
             boolean isBackstagePasses = item.name.equals("Backstage passes to a TAFKAL80ETC concert");
             boolean isSulfuras = item.name.equals("Sulfuras, Hand of Ragnaros");
 
-            if (isAgedBrie) {
-                processAgedBrieItem(item);
-            } else if (isBackstagePasses) {
+            if (isBackstagePasses) {
                 processBackstagePasses(item);
             } else if (isSulfuras) {
                 // do nothing
             } else {
-                processDefaultItem(item);
-            }
-        }
-    }
-
-    private void processDefaultItem(Item item) {
-        if (item.quality > 0) {
-            item.quality = item.quality - 1;
-        }
-        item.sellIn = item.sellIn - 1;
-        if (item.sellIn < 0) {
-            if (item.quality > 0) {
-                item.quality = item.quality - 1;
+                UpdateStrategy strategy = UpdateStrategyFactory.getUpdateStrategyFor(item);
+                strategy.update(item);
             }
         }
     }
@@ -60,19 +49,5 @@ class GildedRose {
             item.quality = 0;
         }
     }
-
-    private void processAgedBrieItem(Item item) {
-        if (item.quality < 50) {
-            item.quality = item.quality + 1;
-
-        }
-        item.sellIn = item.sellIn - 1;
-        if (item.sellIn < 0) {
-            if (item.quality < 50) {
-                item.quality = item.quality + 1;
-            }
-        }
-    }
-
 
 }
