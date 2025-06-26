@@ -7,6 +7,10 @@ public class ItemService {
         if (item.quality > 0) item.quality--;
     }
 
+    public void increaseQuality(Item item) {
+        if (item.quality < 50) item.quality++;
+    }
+
     public void decreaseSellIn(Item item) {
         item.sellIn--;
     }

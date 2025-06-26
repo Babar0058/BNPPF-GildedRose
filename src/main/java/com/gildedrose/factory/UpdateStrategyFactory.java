@@ -16,7 +16,7 @@ public class UpdateStrategyFactory {
         this.itemService = itemService;
 
         Map<String, UpdateStrategy> map = new HashMap<>();
-        map.put("Aged Brie", new UpdateAgedBrieStrategy());
+        map.put("Aged Brie", new UpdateAgedBrieStrategy(itemService));
         map.put("Backstage passes to a TAFKAL80ETC concert", new UpdateBackstagePassesStrategy());
         map.put("Sulfuras, Hand of Ragnaros", new UpdateSulfurasStrategy());
         strategyMap = Collections.unmodifiableMap(map);
