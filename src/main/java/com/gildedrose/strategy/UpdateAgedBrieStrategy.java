@@ -1,19 +1,21 @@
 package com.gildedrose.strategy;
 
 import com.gildedrose.Item;
+import com.gildedrose.service.ItemService;
 
 public class UpdateAgedBrieStrategy implements UpdateStrategy {
+    private final ItemService itemService;
+
+    public UpdateAgedBrieStrategy(ItemService itemService) {
+        this.itemService = itemService;
+    }
+
     @Override
     public void update(Item item) {
-        if (item.quality < 50) {
-            item.quality = item.quality + 1;
-
-        }
-        item.sellIn = item.sellIn - 1;
+        itemService.increaseQuality(item);
+        itemService.decreaseSellIn(item);
         if (item.sellIn < 0) {
-            if (item.quality < 50) {
-                item.quality = item.quality + 1;
-            }
+            itemService.increaseQuality(item);
         }
     }
 }
