@@ -7,9 +7,9 @@ class GildedRose {
     private final UpdateStrategyFactory strategyFactory;
     Item[] items;
 
-    public GildedRose(Item[] items) {
+    public GildedRose(Item[] items, UpdateStrategyFactory strategyFactory) {
         this.items = items;
-        this.strategyFactory = new UpdateStrategyFactory();
+        this.strategyFactory = strategyFactory;
     }
 
     public void updateQuality() {
