@@ -2,6 +2,7 @@ package com.gildedrose.factory;
 
 import com.gildedrose.Item;
 import com.gildedrose.strategy.UpdateAgedBrieStrategy;
+import com.gildedrose.strategy.UpdateBackstagePassesStrategy;
 import com.gildedrose.strategy.UpdateDefaultItemStrategy;
 import com.gildedrose.strategy.UpdateStrategy;
 
@@ -15,7 +16,7 @@ public class UpdateStrategyFactory {
     public UpdateStrategyFactory() {
         Map<String, UpdateStrategy> map = new HashMap<>();
         map.put("Aged Brie", new UpdateAgedBrieStrategy());
-
+        map.put("Backstage passes to a TAFKAL80ETC concert", new UpdateBackstagePassesStrategy());
         strategyMap = Collections.unmodifiableMap(map);
     }
 
