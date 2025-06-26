@@ -1,6 +1,7 @@
 package com.gildedrose;
 
 import com.gildedrose.factory.UpdateStrategyFactory;
+import com.gildedrose.service.ItemService;
 
 public class TexttestFixture {
     public static void main(String[] args) {
@@ -18,7 +19,8 @@ public class TexttestFixture {
             // this conjured item does not work properly yet
             new Item("Conjured Mana Cake", 3, 6)};
 
-        GildedRose app = new GildedRose(items, new UpdateStrategyFactory());
+        ItemService itemService = new ItemService();
+        GildedRose app = new GildedRose(items, new UpdateStrategyFactory(itemService));
 
         int days = 2;
         if (args.length > 0) {
