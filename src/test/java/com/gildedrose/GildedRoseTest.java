@@ -1,5 +1,6 @@
 package com.gildedrose;
 
+import com.gildedrose.factory.UpdateStrategyFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -13,7 +14,7 @@ class GildedRoseTest {
     }
 
     private GildedRose simulateDaysPassed(Item[] items, int days) {
-        GildedRose app = new GildedRose(items);
+        GildedRose app = new GildedRose(items, new UpdateStrategyFactory());
         for (int i = 0; i < days; i++) {
             app.updateQuality();
         }

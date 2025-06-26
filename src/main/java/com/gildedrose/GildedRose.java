@@ -1,78 +1,21 @@
 package com.gildedrose;
 
+import com.gildedrose.factory.UpdateStrategyFactory;
+import com.gildedrose.strategy.UpdateStrategy;
+
 class GildedRose {
+    private final UpdateStrategyFactory strategyFactory;
     Item[] items;
 
-    public GildedRose(Item[] items) {
+    public GildedRose(Item[] items, UpdateStrategyFactory strategyFactory) {
         this.items = items;
+        this.strategyFactory = strategyFactory;
     }
 
     public void updateQuality() {
         for (Item item : items) {
-            boolean isAgedBrie = item.name.equals("Aged Brie");
-            boolean isBackstagePasses = item.name.equals("Backstage passes to a TAFKAL80ETC concert");
-            boolean isSulfuras = item.name.equals("Sulfuras, Hand of Ragnaros");
-
-            if (isAgedBrie) {
-                processAgedBrieItem(item);
-            } else if (isBackstagePasses) {
-                processBackstagePasses(item);
-            } else if (isSulfuras) {
-                // do nothing
-            } else {
-                processDefaultItem(item);
-            }
+            UpdateStrategy strategy = strategyFactory.getUpdateStrategyFor(item);
+            strategy.update(item);
         }
     }
-
-    private void processDefaultItem(Item item) {
-        if (item.quality > 0) {
-            item.quality = item.quality - 1;
-        }
-        item.sellIn = item.sellIn - 1;
-        if (item.sellIn < 0) {
-            if (item.quality > 0) {
-                item.quality = item.quality - 1;
-            }
-        }
-    }
-
-    private void processBackstagePasses(Item item) {
-        if (item.quality < 50) {
-            item.quality = item.quality + 1;
-
-            if (item.sellIn < 11) {
-                if (item.quality < 50) {
-                    item.quality = item.quality + 1;
-                }
-            }
-
-            if (item.sellIn < 6) {
-                if (item.quality < 50) {
-                    item.quality = item.quality + 1;
-                }
-            }
-        }
-
-        item.sellIn = item.sellIn - 1;
-
-        if (item.sellIn < 0) {
-            item.quality = 0;
-        }
-    }
-
-    private void processAgedBrieItem(Item item) {
-        if (item.quality < 50) {
-            item.quality = item.quality + 1;
-
-        }
-        item.sellIn = item.sellIn - 1;
-        if (item.sellIn < 0) {
-            if (item.quality < 50) {
-                item.quality = item.quality + 1;
-            }
-        }
-    }
-
-
 }
