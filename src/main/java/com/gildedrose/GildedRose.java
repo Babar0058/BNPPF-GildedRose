@@ -14,14 +14,8 @@ class GildedRose {
 
     public void updateQuality() {
         for (Item item : items) {
-            boolean isSulfuras = item.name.equals("Sulfuras, Hand of Ragnaros");
-
-            if (isSulfuras) {
-                // do nothing
-            } else {
-                UpdateStrategy strategy = strategyFactory.getUpdateStrategyFor(item);
-                strategy.update(item);
-            }
+            UpdateStrategy strategy = strategyFactory.getUpdateStrategyFor(item);
+            strategy.update(item);
         }
     }
 }
