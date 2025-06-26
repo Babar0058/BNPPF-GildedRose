@@ -1,30 +1,25 @@
 package com.gildedrose.strategy;
 
 import com.gildedrose.Item;
+import com.gildedrose.service.ItemService;
 
 public class UpdateBackstagePassesStrategy implements UpdateStrategy {
+    private final ItemService itemService;
+
+    public UpdateBackstagePassesStrategy(ItemService itemService) {
+        this.itemService = itemService;
+    }
+
     @Override
     public void update(Item item) {
-        if (item.quality < 50) {
-            item.quality = item.quality + 1;
-
-            if (item.sellIn < 11) {
-                if (item.quality < 50) {
-                    item.quality = item.quality + 1;
-                }
-            }
-
-            if (item.sellIn < 6) {
-                if (item.quality < 50) {
-                    item.quality = item.quality + 1;
-                }
-            }
-        }
-
-        item.sellIn = item.sellIn - 1;
+        itemService.decreaseSellIn(item);
 
         if (item.sellIn < 0) {
-            item.quality = 0;
+            itemService.resetQuality(item);
+        } else {
+            itemService.increaseQuality(item);
+            if (item.sellIn < 10) itemService.increaseQuality(item);
+            if (item.sellIn < 5) itemService.increaseQuality(item);
         }
     }
 }

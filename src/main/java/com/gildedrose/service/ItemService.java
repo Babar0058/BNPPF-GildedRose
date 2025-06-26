@@ -11,6 +11,10 @@ public class ItemService {
         if (item.quality < 50) item.quality++;
     }
 
+    public void resetQuality(Item item) {
+        item.quality = 0;
+    }
+
     public void decreaseSellIn(Item item) {
         item.sellIn--;
     }
