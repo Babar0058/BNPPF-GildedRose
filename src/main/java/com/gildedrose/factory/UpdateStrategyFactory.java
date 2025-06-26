@@ -10,16 +10,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UpdateStrategyFactory {
-    private static final Map<String, UpdateStrategy> strategyMap;
+    private final Map<String, UpdateStrategy> strategyMap;
 
-    static {
+    public UpdateStrategyFactory() {
         Map<String, UpdateStrategy> map = new HashMap<>();
         map.put("Aged Brie", new UpdateAgedBrieStrategy());
 
         strategyMap = Collections.unmodifiableMap(map);
     }
 
-    public static UpdateStrategy getUpdateStrategyFor(Item item) {
+    public UpdateStrategy getUpdateStrategyFor(Item item) {
         return strategyMap.getOrDefault(item.name, new UpdateDefaultItemStrategy());
     }
 }
