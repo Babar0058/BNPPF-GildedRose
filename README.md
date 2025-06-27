@@ -11,6 +11,7 @@ Branch:
 - (Bonus) **Refacto/Documentation** : Javadoc & documentation about the project.
 - (Bonus) **Refacto/TestRelocation** : Relocation of the tests.
 - **Hotfix/BugConjuredItem** : A bug was found and needed to be quickly fix.
+- **Refacto/HotfixConjuredByStrategyRegistry** : Use a predicate-based registry to resolve which strategy should be used.
 
 ## Core Components
 
