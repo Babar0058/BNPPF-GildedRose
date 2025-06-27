@@ -1,213 +1,222 @@
 package com.gildedrose;
 
-import com.gildedrose.factory.UpdateStrategyFactory;
-import com.gildedrose.service.ItemService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class GildedRoseTest {
-    @BeforeEach
-    void setUp(TestInfo testInfo) {
-        System.out.println("====== Running: " + testInfo.getDisplayName() + " ======");
+class GildedRoseTest extends AbstractGildedRoseTest {
+    private Item[] getItems() {
+        return new Item[]{
+            new Item("+5 Dexterity Vest", 10, 20), //
+            new Item("Aged Brie", 2, 0), //
+            new Item("Elixir of the Mongoose", 5, 7), //
+            new Item("Sulfuras, Hand of Ragnaros", 0, 80), //
+            new Item("Sulfuras, Hand of Ragnaros", -1, 80),
+            new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20),
+            new Item("Backstage passes to a TAFKAL80ETC concert", 10, 49),
+            new Item("Backstage passes to a TAFKAL80ETC concert", 5, 49),
+            new Item("Conjured Mana Cake", 3, 6)};
     }
 
-    private GildedRose simulateDaysPassed(Item[] items, int days) {
-        ItemService itemService = new ItemService();
-        GildedRose app = new GildedRose(items, new UpdateStrategyFactory(itemService));
-        for (int i = 0; i < days; i++) {
-            app.updateQuality();
-        }
-        return app;
+    private Item getDefaultItem(Item[] items) {
+        return items[0];
     }
 
-    @Test
-    void shouldNotChangeItemNameAfterUpdate() {
-        Item[] items = new Item[]{new Item("+5 Dexterity Vest", 0, 0)};
-        GildedRose app = simulateDaysPassed(items, 1);
-        assertEquals("+5 Dexterity Vest", app.items[0].name, "Item name should remain unchanged");
+    private Item getAgedBrie(Item[] items) {
+        return items[1];
     }
 
-    @Test
-    void defaultItem_onSellDate_qualityDecreasesBy1EachDay() {
-        Item[] items = new Item[]{new Item("+5 Dexterity Vest", 10, 20)};
-        GildedRose app = simulateDaysPassed(items, 10);
-        Item item = app.items[0];
-
-        assertEquals("+5 Dexterity Vest", item.name);
-        assertEquals(0, item.sellIn);
-        assertEquals(10, item.quality);
+    private Item getElixir(Item[] items) {
+        return items[2];
     }
 
-    @Test
-    void defaultItem_afterSellDate_qualityDecreasesBy2EachDay() {
-        Item[] items = new Item[]{new Item("+5 Dexterity Vest", 10, 20)};
-        GildedRose app = simulateDaysPassed(items, 12);
-        Item item = app.items[0];
-
-        assertEquals(-2, item.sellIn);
-        assertEquals(6, item.quality);
+    private Item getSulfurasWithSellIn0(Item[] items) {
+        return items[3];
     }
 
-    @Test
-    void defaultItem_afterSellDate_qualityShouldNotBeNegative() {
-        Item[] items = new Item[]{new Item("+5 Dexterity Vest", 10, 20)};
-        GildedRose app = simulateDaysPassed(items, 25);
-        Item item = app.items[0];
+    private Item getSulfurasExpired(Item[] items) {
+        return items[4];
+    }
 
-        assertEquals(-15, item.sellIn);
-        assertEquals(0, item.quality);
+    private Item getBackstagePasses15Days(Item[] items) {
+        return items[5];
+    }
+
+    private Item getBackstagePasses10Days(Item[] items) {
+        return items[6];
+    }
+
+    private Item getBackstagePasses5Days(Item[] items) {
+        return items[7];
+    }
+
+    private Item getConjuredManaCakeItem(Item[] items) {
+        return items[8];
     }
 
     @Test
-    void agedBrieItem_beforeSellDate_qualityIncreasesBy1EachDay() {
-        Item[] items = new Item[]{new Item("Aged Brie", 2, 0)};
-        GildedRose app = simulateDaysPassed(items, 1);
-        Item item = app.items[0];
+    void TestBasketOfItems3DaysIteration() {
+        Item[] items = getItems();
+        simulateDaysPassed(items, 3);
 
-        assertEquals(1, item.sellIn);
-        assertEquals(1, item.quality);
+        assertEquals(7, getDefaultItem(items).sellIn);
+        assertEquals(17, getDefaultItem(items).quality);
+
+        assertEquals(-1, getAgedBrie(items).sellIn);
+        assertEquals(4, getAgedBrie(items).quality);
+
+        assertEquals(2, getElixir(items).sellIn);
+        assertEquals(4, getElixir(items).quality);
+
+        assertEquals(0, getSulfurasWithSellIn0(items).sellIn);
+        assertEquals(80, getSulfurasWithSellIn0(items).quality);
+
+        assertEquals(-1, getSulfurasExpired(items).sellIn);
+        assertEquals(80, getSulfurasExpired(items).quality);
+
+        assertEquals(12, getBackstagePasses15Days(items).sellIn);
+        assertEquals(23, getBackstagePasses15Days(items).quality);
+
+        assertEquals(7, getBackstagePasses10Days(items).sellIn);
+        assertEquals(50, getBackstagePasses10Days(items).quality);
+
+        assertEquals(2, getBackstagePasses5Days(items).sellIn);
+        assertEquals(50, getBackstagePasses5Days(items).quality);
+
+        assertEquals(0, getConjuredManaCakeItem(items).sellIn);
+        assertEquals(3, getConjuredManaCakeItem(items).quality);
     }
 
     @Test
-    void agedBrieItem_beforeSellDate_qualityMaxed() {
-        Item[] items = new Item[]{new Item("Aged Brie", 2, 50)};
-        GildedRose app = simulateDaysPassed(items, 1);
-        Item item = app.items[0];
+    void TestBasketOfItems5DaysIteration() {
+        Item[] items = getItems();
+        simulateDaysPassed(items, 5);
 
-        assertEquals(1, item.sellIn);
-        assertEquals(50, item.quality);
+        assertEquals(5, getDefaultItem(items).sellIn);
+        assertEquals(15, getDefaultItem(items).quality);
+
+        assertEquals(-3, getAgedBrie(items).sellIn);
+        assertEquals(8, getAgedBrie(items).quality);
+
+        assertEquals(0, getElixir(items).sellIn);
+        assertEquals(2, getElixir(items).quality);
+
+        assertEquals(0, getSulfurasWithSellIn0(items).sellIn);
+        assertEquals(80, getSulfurasWithSellIn0(items).quality);
+
+        assertEquals(-1, getSulfurasExpired(items).sellIn);
+        assertEquals(80, getSulfurasExpired(items).quality);
+
+        assertEquals(10, getBackstagePasses15Days(items).sellIn);
+        assertEquals(25, getBackstagePasses15Days(items).quality);
+
+        assertEquals(5, getBackstagePasses10Days(items).sellIn);
+        assertEquals(50, getBackstagePasses10Days(items).quality);
+
+        assertEquals(0, getBackstagePasses5Days(items).sellIn);
+        assertEquals(50, getBackstagePasses5Days(items).quality);
+
+        assertEquals(-2, getConjuredManaCakeItem(items).sellIn);
+        assertEquals(0, getConjuredManaCakeItem(items).quality);
     }
 
     @Test
-    void agedBrieItem_onSellDate_qualityIncreasesBy1EachDay() {
-        Item[] items = new Item[]{new Item("Aged Brie", 2, 0)};
-        GildedRose app = simulateDaysPassed(items, 2);
-        Item item = app.items[0];
+    void TestBasketOfItems10DaysIteration() {
+        Item[] items = getItems();
+        simulateDaysPassed(items, 10);
 
-        assertEquals(0, item.sellIn);
-        assertEquals(2, item.quality);
+        assertEquals(0, getDefaultItem(items).sellIn);
+        assertEquals(10, getDefaultItem(items).quality);
+
+        assertEquals(-8, getAgedBrie(items).sellIn);
+        assertEquals(18, getAgedBrie(items).quality);
+
+        assertEquals(-5, getElixir(items).sellIn);
+        assertEquals(0, getElixir(items).quality);
+
+        assertEquals(0, getSulfurasWithSellIn0(items).sellIn);
+        assertEquals(80, getSulfurasWithSellIn0(items).quality);
+
+        assertEquals(-1, getSulfurasExpired(items).sellIn);
+        assertEquals(80, getSulfurasExpired(items).quality);
+
+        assertEquals(5, getBackstagePasses15Days(items).sellIn);
+        assertEquals(35, getBackstagePasses15Days(items).quality);
+
+        assertEquals(0, getBackstagePasses10Days(items).sellIn);
+        assertEquals(50, getBackstagePasses10Days(items).quality);
+
+        assertEquals(-5, getBackstagePasses5Days(items).sellIn);
+        assertEquals(0, getBackstagePasses5Days(items).quality);
+
+        assertEquals(-7, getConjuredManaCakeItem(items).sellIn);
+        assertEquals(0, getConjuredManaCakeItem(items).quality);
     }
 
     @Test
-    void agedBrieItem_afterSellDate_qualityIncreasesBy2EachDay() {
-        Item[] items = new Item[]{new Item("Aged Brie", 2, 0)};
-        GildedRose app = simulateDaysPassed(items, 10);
-        Item item = app.items[0];
+    void TestBasketOfItems15DaysIteration() {
+        Item[] items = getItems();
+        simulateDaysPassed(items, 15);
 
-        assertEquals(-8, item.sellIn);
-        assertEquals(18, item.quality);
+        assertEquals(-5, getDefaultItem(items).sellIn);
+        assertEquals(0, getDefaultItem(items).quality);
+
+        assertEquals(-13, getAgedBrie(items).sellIn);
+        assertEquals(28, getAgedBrie(items).quality);
+
+        assertEquals(-10, getElixir(items).sellIn);
+        assertEquals(0, getElixir(items).quality);
+
+        assertEquals(0, getSulfurasWithSellIn0(items).sellIn);
+        assertEquals(80, getSulfurasWithSellIn0(items).quality);
+
+        assertEquals(-1, getSulfurasExpired(items).sellIn);
+        assertEquals(80, getSulfurasExpired(items).quality);
+
+        assertEquals(0, getBackstagePasses15Days(items).sellIn);
+        assertEquals(50, getBackstagePasses15Days(items).quality);
+
+        assertEquals(-5, getBackstagePasses10Days(items).sellIn);
+        assertEquals(0, getBackstagePasses10Days(items).quality);
+
+        assertEquals(-10, getBackstagePasses5Days(items).sellIn);
+        assertEquals(0, getBackstagePasses5Days(items).quality);
+
+        assertEquals(-12, getConjuredManaCakeItem(items).sellIn);
+        assertEquals(0, getConjuredManaCakeItem(items).quality);
     }
 
     @Test
-    void agedBrieItem_afterSellDate_qualityNeverExceedsFifty() {
-        Item[] items = new Item[]{new Item("Aged Brie", 2, 0)};
-        GildedRose app = simulateDaysPassed(items, 30);
-        Item item = app.items[0];
+    void TestBasketOfItems30DaysIteration() {
+        Item[] items = getItems();
+        simulateDaysPassed(items, 30);
 
-        assertEquals(-28, item.sellIn);
-        assertEquals(50, item.quality);
+        assertEquals(-20, getDefaultItem(items).sellIn);
+        assertEquals(0, getDefaultItem(items).quality);
+
+        assertEquals(-28, getAgedBrie(items).sellIn);
+        assertEquals(50, getAgedBrie(items).quality);
+
+        assertEquals(-25, getElixir(items).sellIn);
+        assertEquals(0, getElixir(items).quality);
+
+        assertEquals(0, getSulfurasWithSellIn0(items).sellIn);
+        assertEquals(80, getSulfurasWithSellIn0(items).quality);
+
+        assertEquals(-1, getSulfurasExpired(items).sellIn);
+        assertEquals(80, getSulfurasExpired(items).quality);
+
+        assertEquals(-15, getBackstagePasses15Days(items).sellIn);
+        assertEquals(0, getBackstagePasses15Days(items).quality);
+
+        assertEquals(-20, getBackstagePasses10Days(items).sellIn);
+        assertEquals(0, getBackstagePasses10Days(items).quality);
+
+        assertEquals(-25, getBackstagePasses5Days(items).sellIn);
+        assertEquals(0, getBackstagePasses5Days(items).quality);
+
+        assertEquals(-27, getConjuredManaCakeItem(items).sellIn);
+        assertEquals(0, getConjuredManaCakeItem(items).quality);
     }
 
-    @Test
-    void backstagePassesItem_beforeSellDate_increaseBy1WhenMoreThan10Days() {
-        Item[] items = new Item[]{new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20)};
-        GildedRose app = simulateDaysPassed(items, 1);
-        Item item = app.items[0];
-
-        assertEquals(14, item.sellIn);
-        assertEquals(21, item.quality);
-    }
-
-    @Test
-    void backstagePassesItem_beforeSellDate_qualityIncreaseBy2When10To6Days() {
-        Item[] items = new Item[]{new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20)};
-        GildedRose app = simulateDaysPassed(items, 7); // 9 days left
-        Item item = app.items[0];
-
-        assertEquals(8, item.sellIn);
-        assertEquals(29, item.quality); // 20 + 5 (5 normal days) + 4 (2 double quality days)
-    }
-
-    @Test
-    void backstagePassesItem_beforeSellDate_qualityIncreaseBy3When5DaysOrLess() {
-        Item[] items = new Item[]{new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20)};
-        GildedRose app = simulateDaysPassed(items, 13);
-        Item item = app.items[0];
-
-        assertEquals(2, item.sellIn);
-        assertEquals(44, item.quality); // 20 + 5 (5 normal days) + 10 (5 double quality days) + 9 (3 triple quality days)
-    }
-
-    @Test
-    void backstagePassesItem_afterSellDate_qualityDropToZero() {
-        Item[] items = new Item[]{new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20)};
-        GildedRose app = simulateDaysPassed(items, 16);
-        Item item = app.items[0];
-
-        assertEquals(-1, item.sellIn);
-        assertEquals(0, item.quality);
-    }
-
-    @Test
-    void backstagePassesItem_onSellDate_qualityNeverExceedsFifty() {
-        Item[] items = new Item[]{new Item("Backstage passes to a TAFKAL80ETC concert", 5, 49)};
-        GildedRose app = simulateDaysPassed(items, 5);
-        Item item = app.items[0];
-
-        assertEquals(0, item.sellIn);
-        assertEquals(50, item.quality);
-    }
-
-    @Test
-    void sulfurasItem_afterSellDate_SellInAndQualityDoNotUpdate() {
-        Item[] items = new Item[]{new Item("Sulfuras, Hand of Ragnaros", 0, 80)};
-        GildedRose app = simulateDaysPassed(items, 5);
-        Item item = app.items[0];
-
-        assertEquals(0, item.sellIn);
-        assertEquals(80, item.quality);
-    }
-
-    @Test
-    void sulfurasItem_sellInAndQualityNeverUpdate() {
-        Item[] items = new Item[]{new Item("Sulfuras, Hand of Ragnaros", 10, 80)};
-        GildedRose app = simulateDaysPassed(items, 15);
-        Item item = app.items[0];
-
-        assertEquals(10, item.sellIn);
-        assertEquals(80, item.quality);
-    }
-
-    @Test
-    void conjuredItem_beforeSellDate_qualityDecreaseBy2() {
-        Item[] items = new Item[]{new Item("Conjured", 5, 6)};
-        GildedRose app = simulateDaysPassed(items, 2);
-        Item item = app.items[0];
-
-        assertEquals(3, item.sellIn);
-        assertEquals(2, item.quality);
-    }
-
-    @Test
-    void conjuredItem_afterSellDate_qualityDecreaseBy4() {
-        Item[] items = new Item[]{new Item("Conjured", 1, 10)};
-        GildedRose app = simulateDaysPassed(items, 2);
-        Item item = app.items[0];
-
-        assertEquals(-1, item.sellIn);
-        assertEquals(4, item.quality); // 10 - 2 (1 normal day) - 4 (1 normal day after sellIn)
-    }
-
-    @Test
-    void conjuredItem_afterSellDate_qualityShouldNotBeNegative() {
-        Item[] items = new Item[]{new Item("Conjured", 1, 10)};
-        GildedRose app = simulateDaysPassed(items, 5);
-        Item item = app.items[0];
-
-        assertEquals(-4, item.sellIn);
-        assertEquals(0, item.quality);
-    }
 }
