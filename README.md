@@ -10,6 +10,7 @@ Branch:
 - **Feature/ConjuredItemImplementation** : Add support for the `"Conjured"` item type, which degrades in quality twice as fast as normal items.
 - (Bonus) **Refacto/Documentation** : Javadoc & documentation about the project.
 - (Bonus) **Refacto/TestRelocation** : Relocation of the tests.
+- **Hotfix/BugConjuredItem** : A bug was found and needed to be quickly fix.
 
 ## Core Components
 
