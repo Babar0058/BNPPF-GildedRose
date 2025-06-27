@@ -4,9 +4,8 @@ import com.gildedrose.Item;
 import com.gildedrose.service.ItemService;
 import com.gildedrose.strategy.*;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Factory responsible for providing the appropriate {@link UpdateStrategy}
@@ -23,23 +22,38 @@ import java.util.Map;
  * </p>
  */
 public class UpdateStrategyFactory {
-    private final Map<String, UpdateStrategy> strategyMap;
+    private final List<UpdateStrategyRegistration> registrations = new ArrayList<>();
     private final ItemService itemService;
 
     public UpdateStrategyFactory(ItemService itemService) {
         this.itemService = itemService;
 
-        Map<String, UpdateStrategy> map = new HashMap<>();
-        map.put("Aged Brie", new UpdateAgedBrieStrategy(itemService));
-        map.put("Backstage passes to a TAFKAL80ETC concert", new UpdateBackstagePassesStrategy(itemService));
-        map.put("Sulfuras, Hand of Ragnaros", new UpdateSulfurasStrategy());
-        strategyMap = Collections.unmodifiableMap(map);
+        registrations.add(new UpdateStrategyRegistration(
+            item -> item.name.equals("Aged Brie"),
+            new UpdateAgedBrieStrategy(itemService)
+        ));
+
+        registrations.add(new UpdateStrategyRegistration(
+            item -> item.name.equals("Backstage passes to a TAFKAL80ETC concert"),
+            new UpdateBackstagePassesStrategy(itemService)
+        ));
+
+        registrations.add(new UpdateStrategyRegistration(
+            item -> item.name.equals("Sulfuras, Hand of Ragnaros"),
+            new UpdateSulfurasStrategy()
+        ));
+
+        registrations.add(new UpdateStrategyRegistration(
+            item -> item.name.toLowerCase().contains("conjured"),
+            new UpdateConjuredStrategy(itemService)
+        ));
     }
 
     public UpdateStrategy getUpdateStrategyFor(Item item) {
-        if (item.name.toLowerCase().contains("conjured")) {
-            return new UpdateConjuredStrategy(itemService);
-        }
-        return strategyMap.getOrDefault(item.name, new UpdateDefaultItemStrategy(itemService));
+        return registrations.stream()
+            .filter(reg -> reg.matches(item))
+            .map(UpdateStrategyRegistration::getStrategy)
+            .findFirst()
+            .orElse(new UpdateDefaultItemStrategy(itemService));
     }
 }
