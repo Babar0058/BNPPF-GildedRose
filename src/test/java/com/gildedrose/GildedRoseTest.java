@@ -84,7 +84,7 @@ class GildedRoseTest extends AbstractGildedRoseTest {
         assertEquals(50, getBackstagePasses5Days(items).quality);
 
         assertEquals(0, getConjuredManaCakeItem(items).sellIn);
-        assertEquals(3, getConjuredManaCakeItem(items).quality);
+        assertEquals(0, getConjuredManaCakeItem(items).quality);
     }
 
     @Test

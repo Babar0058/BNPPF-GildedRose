@@ -33,11 +33,13 @@ public class UpdateStrategyFactory {
         map.put("Aged Brie", new UpdateAgedBrieStrategy(itemService));
         map.put("Backstage passes to a TAFKAL80ETC concert", new UpdateBackstagePassesStrategy(itemService));
         map.put("Sulfuras, Hand of Ragnaros", new UpdateSulfurasStrategy());
-        map.put("Conjured", new UpdateConjuredStrategy(itemService));
         strategyMap = Collections.unmodifiableMap(map);
     }
 
     public UpdateStrategy getUpdateStrategyFor(Item item) {
+        if (item.name.toLowerCase().contains("conjured")) {
+            return new UpdateConjuredStrategy(itemService);
+        }
         return strategyMap.getOrDefault(item.name, new UpdateDefaultItemStrategy(itemService));
     }
 }
