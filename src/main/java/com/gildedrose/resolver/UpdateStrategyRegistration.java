@@ -1,4 +1,4 @@
-package com.gildedrose.factory;
+package com.gildedrose.resolver;
 
 import com.gildedrose.Item;
 import com.gildedrose.strategy.UpdateStrategy;

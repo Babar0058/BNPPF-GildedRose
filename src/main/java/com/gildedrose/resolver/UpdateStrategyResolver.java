@@ -1,4 +1,4 @@
-package com.gildedrose.factory;
+package com.gildedrose.resolver;
 
 import com.gildedrose.Item;
 import com.gildedrose.service.ItemService;
@@ -8,24 +8,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Factory responsible for providing the appropriate {@link UpdateStrategy}
- * implementation for a given item type.
+ * Resolver responsible for selecting the appropriate {@link UpdateStrategy}
+ * implementation for a given {@link Item} instance.
  *
- * <p>
- * The strategy is selected based on the item's name. If no specific strategy is
- * found, a default item strategy is returned.
- * </p>
+ * <p>This implementation uses a list of {@link UpdateStrategyRegistration} entries,
+ * each of which defines a predicate-condition and the corresponding strategy to apply.
+ * This allows for flexible and extensible matching logic
  *
- * <p>
- * This factory is initialized with an {@link ItemService} instance and delegates
- * it to all applicable strategies that require common item operations.
- * </p>
+ * <p>If no strategy matches the item, a {@link UpdateDefaultItemStrategy} is used
+ * as the fallback.</p>
+ *
+ * <p>This resolver is initialized with an {@link ItemService}, which is injected into
+ * each applicable strategy that requires shared item manipulation logic.</p>
  */
-public class UpdateStrategyFactory {
+public class UpdateStrategyResolver {
     private final List<UpdateStrategyRegistration> registrations = new ArrayList<>();
     private final ItemService itemService;
 
-    public UpdateStrategyFactory(ItemService itemService) {
+    public UpdateStrategyResolver(ItemService itemService) {
         this.itemService = itemService;
 
         registrations.add(new UpdateStrategyRegistration(
