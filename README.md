@@ -12,32 +12,42 @@ Branch:
 - (Bonus) **Refacto/TestRelocation** : Relocation of the tests.
 - **Hotfix/BugConjuredItem** : A bug was found and needed to be quickly fix.
 - **Refacto/HotfixConjuredByStrategyRegistry** : Use a predicate-based registry to resolve which strategy should be used.
+- **Refacto/DocumentationUpdateReadmeRegistration** : Update the documentation + switch from factory (=Map -> exact match) to resolver. (Use logic + evaluation rules)
 
 ## Core Components
 
 ### 1. `GildedRose`
-The main entry point for updating items. It delegates the update logic to the appropriate strategy using `UpdateStrategyFactory`.
+The main entry point for updating items. It delegates the update logic to the appropriate strategy using `UpdateStrategyResolver`.
 
 - Method: `updateQuality()`
 - For each item:
-    - Gets the correct `UpdateStrategy` from the factory
+    - Gets the correct `UpdateStrategy` from the resolver
     - Calls `strategy.update(item)`
 
 ---
 
-### 2. `UpdateStrategyFactory`
-Responsible for returning the right strategy implementation based on the item's name.
+### 2. `UpdateStrategyResolver`
+Responsible for returning the right strategy implementation based on the item's characteristics.
 
-- Maps item names to strategies like:
-    - `"Aged Brie"` → `UpdateAgedBrieStrategy`
-    - `"Backstage passes"` → `UpdateBackstagePassesStrategy`
-    - `"Sulfuras"` → `UpdateSulfurasStrategy`
-    - `"Conjured"` → `UpdateConjuredStrategy`
-- Injects a shared `ItemService` instance into each strategy (Stateless class, only method & no field)
+- Uses a list of `StrategyRegistration` entries:
+    - Each registration has a condition (`Predicate<Item>`) and a strategy instance
+- Injects a shared `ItemService` instance into each strategy (Stateless class, only methods & no fields)
 
 ---
 
-### 3. `UpdateStrategy` (Interface)
+### 3. `StrategyRegistration`
+Encapsulates the condition-strategy pairing. When the condition matches an item, the associated strategy is selected.
+
+```java
+public class StrategyRegistration {
+    Predicate<Item> condition;
+    UpdateStrategy strategy;
+}
+```
+
+---
+
+### 4. `UpdateStrategy` (Interface)
 Defines a single method:
 
 ```java
@@ -53,7 +63,7 @@ Examples:
 
 ---
 
-### 4. `ItemService`
+### 5. `ItemService`
 A utility service (Stateless class) that provides reusable operations on `Item` instances:
 - `increaseQuality(Item item)`
 - `decreaseQuality(Item item)`
@@ -66,10 +76,10 @@ This ensures consistent behavior across strategies and avoids duplicated logic.
 
 ## How It Works – Step by Step
 
-1. The `GildedRose` class receives an array of items and a preconfigured `UpdateStrategyFactory` (injected)
+1. The `GildedRose` class receives an array of items and a preconfigured `UpdateStrategyResolver` (injected)
 2. For each item:
-    - It calls `UpdateStrategyFactory.getUpdateStrategyFor(item)`
-    - The factory returns the appropriate `UpdateStrategy` based on the item's name.
+    - It calls `UpdateStrategyResolver.getUpdateStrategyFor(item)`
+    - The resolver iterates through registered conditions and returns the matching strategy.
 3. The selected strategy calls the necessary methods from `ItemService` to update the item according to business rules.
 4. The item's `sellIn` and `quality` are updated accordingly.
 
@@ -79,12 +89,15 @@ This ensures consistent behavior across strategies and avoids duplicated logic.
 To add a new item type:
 1. Create a new class implementing `UpdateStrategy`.
 2. Use `ItemService` to apply standard logic.
-3. Register the strategy in `UpdateStrategyFactory`.
+3. Register the strategy in `UpdateStrategyResolver`.
 
 Example:
 
 ```
-map.put("New Item", new UpdateNewItemStrategy(itemService));
+registrations.add(new UpdateStrategyRegistration(
+    item -> item.name.equals("New Item"),
+    new UpdateNewItemStrategy()
+));
 ```
 
 ---
